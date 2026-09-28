@@ -1,0 +1,13 @@
+[project]
+name = "comfyui-remote-h3-latent-upscaler"
+description = "Offload the MiniMax H3 3D latent upscaler to a slave machine."
+version = "1.0.0"
+license = { file = "LICENSE" }
+dependencies = ["torch"]
+
+[project.urls]
+Repository = "https://github.com/wealllovegithub/Comfyui_remote_h3_latent_upscaler"
+
+[tool.comfy]
+PublisherId = "wealllovegithub"
+DisplayName = "ComfyUI Remote H3 Latent Upscaler"
