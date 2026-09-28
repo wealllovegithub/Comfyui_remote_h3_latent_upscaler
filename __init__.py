@@ -49,16 +49,23 @@ def _model_list():
 
 
 def _upscaler_module():
+    """Return the LBH 3D upscaler module.
+
+    Do not probe arbitrary modules with hasattr(). torch.ops answers yes for
+    every name, and the last run called execute on that registry.
+    """
     import sys
-    for mod in list(sys.modules.values()):
-        if mod is None:
+    for name, mod in list(sys.modules.items()):
+        if mod is None or not name.endswith("minimax_h3_latent_upscaler_3d"):
             continue
-        if (
-            hasattr(mod, "MinimaxH3LatentUpscaler3D")
-            and hasattr(mod, "_resolve_device")
-            and hasattr(mod, "load_model")
-        ):
-            return mod
+        cls = getattr(mod, "MinimaxH3LatentUpscaler3D", None)
+        if not isinstance(cls, type) or not callable(getattr(cls, "execute", None)):
+            continue
+        if not callable(getattr(mod, "_resolve_device", None)):
+            continue
+        if not callable(getattr(mod, "load_model", None)):
+            continue
+        return mod
     raise RuntimeError(
         "Comfyui_Minimax_h3_latent_Upscaler is not loaded. Clone "
         "https://github.com/LBH-123-AI/Comfyui_Minimax_h3_latent_Upscaler "
